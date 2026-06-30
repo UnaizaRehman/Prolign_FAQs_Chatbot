@@ -1,0 +1,1257 @@
+{
+  "name": "Unaiza",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "FAQ Ingestion",
+        "formDescription": "Upload a JSON file containing FAQ records to embed and store in Supabase.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "FAQ_JSON",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -4512,
+        2112
+      ],
+      "id": "a22a0f59-a718-4a49-8261-57a2173cec7d",
+      "name": "On form submission1",
+      "webhookId": "815f510f-9743-46f1-8da7-ebe0876b8f98"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "binaryPropertyName": "FAQ_JSON",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -4320,
+        2112
+      ],
+      "id": "a3a87c39-e1d4-4031-bc8f-5bff255d4bf1",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json;\nlet records = [];\nif (Array.isArray(input)) {\n  records = input;\n} else {\n  const arrayKey = Object.keys(input).find(k => Array.isArray(input[k]));\n  records = arrayKey ? input[arrayKey] : [input];\n}\nreturn records.map((item, index) => ({\n  json: {\n    content:       `Q: ${(item.question || \"\").trim()}\\nA: ${(item.answer || \"\").trim()}`,\n    question:      item.question      ?? \"\",\n    answer:        item.answer        ?? \"\",\n    category:      item.category      ?? \"general\",\n    tags:          Array.isArray(item.tags)\n                     ? \"{\" + item.tags.map(t => `\"${t}\"`).join(\",\") + \"}\"\n                     : \"{}\",\n    helpful_count: item.helpful_count ?? 0,\n    source:        \"prolign_faq_seed\",\n    chunk_number:  index\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4144,
+        2112
+      ],
+      "id": "ec38404f-c6f6-416f-9138-6e100b3b12a5",
+      "name": "Parse JSON to FAQ Records"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3824,
+        1968
+      ],
+      "id": "9a67a004-0050-4e56-8ba8-567a2f9f92c6",
+      "name": "Loop Over Items",
+      "alwaysOutputData": false,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000001",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000002",
+              "name": "question",
+              "value": "={{ $json.question }}",
+              "type": "string"
+            },
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000003",
+              "name": "answer",
+              "value": "={{ $json.answer }}",
+              "type": "string"
+            },
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000004",
+              "name": "category",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000005",
+              "name": "tags",
+              "value": "={{ $json.tags }}",
+              "type": "string"
+            },
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000006",
+              "name": "helpful_count",
+              "value": "={{ $json.helpful_count }}",
+              "type": "number"
+            },
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000007",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "a1b2c3d4-0001-0001-0001-000000000008",
+              "name": "chunk_number",
+              "value": "={{ $json.chunk_number }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3472,
+        1936
+      ],
+      "id": "bbb38efc-e102-4ee5-afa1-28dfeee67b41",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.jina.ai/v1/embeddings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer jina_8f6881d2cc6b43d3a24a7ae99be698efsqFckMFKGKuhT-DfIeQm3Bs0uYOo"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ [$node[\"Edit Fields\"].json.content] }}"
+            },
+            {
+              "name": "model",
+              "value": "jina-embeddings-v2-base-en"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -3072,
+        1840
+      ],
+      "id": "ab7e91c0-c333-4289-a303-20419074723f",
+      "name": "HTTP Request (JINA EMBEDDING)",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "tableId": "faqs",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "question",
+              "fieldValue": "={{ $node[\"Edit Fields\"].json.question }}"
+            },
+            {
+              "fieldId": "answer",
+              "fieldValue": "={{ $node[\"Edit Fields\"].json.answer }}"
+            },
+            {
+              "fieldId": "category",
+              "fieldValue": "={{ $('Edit Fields').item.json.category }}"
+            },
+            {
+              "fieldId": "tags",
+              "fieldValue": "={{ $node[\"Edit Fields\"].json.tags }}"
+            },
+            {
+              "fieldId": "helpful_count",
+              "fieldValue": "={{ $('Edit Fields').item.json.helpful_count }}"
+            },
+            {
+              "fieldId": "embedding",
+              "fieldValue": "={{ $json.data[0].embedding }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2672,
+        2032
+      ],
+      "id": "3eedb18a-e350-4886-b56b-3de107066d4f",
+      "name": "Create a row (SUPABASE)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U7vSY34ccXaczkID",
+          "name": "Supabase Unaiza"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.jina.ai/v1/embeddings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer jina_8f6881d2cc6b43d3a24a7ae99be698efsqFckMFKGKuhT-DfIeQm3Bs0uYOo"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ [$('Set Intent').item.json.userMessage] }}"
+            },
+            {
+              "name": "model",
+              "value": "jina-embeddings-v2-base-en"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b8b54c66-2627-410d-9f1f-bf34322cad53",
+      "name": "Embed User Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2672,
+        928
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Prolign-faq",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f5af64a8-b6ab-4742-8594-656b587eb341",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -4624,
+        672
+      ],
+      "webhookId": "mentormentee-faq-webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-message",
+              "name": "userMessage",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "385db5e1-c0c1-43ea-96f9-fc846a92b921",
+      "name": "Extract Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4368,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.message }}",
+        "options": {
+          "systemMessage": "You are an intent classifier for a mentorship platform chatbot. Classify the user's message into exactly one of these two categories:\n\n- FAQ: The user is asking a question, making a request, or continuing a conversation\n- COMPLAINT: The user is explicitly expressing anger, frustration, or reporting a broken feature\n\nWhen in doubt, classify as FAQ.\n\nReply with ONLY the single word: FAQ or COMPLAINT. No explanation, no punctuation."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -3488,
+        560
+      ],
+      "id": "32dd7fc5-e087-4451-b185-e78424aa478d",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -3920,
+        864
+      ],
+      "id": "5627b2ee-a298-468b-abd0-e6a3ffad5614",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "lZlIDLXSkwYW43uL",
+          "name": "Prolign Intent Classifier"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-intent",
+              "name": "intent",
+              "value": "={{ $json.output.toUpperCase().includes('COMPLAINT') ? 'COMPLAINT' : 'FAQ' }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-msg2",
+              "name": "userMessage",
+              "value": "={{ $('Extract Message').item.json.userMessage }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4654e28d-a58f-41c3-84e3-5226edb2a36e",
+      "name": "Set Intent",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3344,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#prolign-chatbot-complaint",
+          "mode": "name"
+        },
+        "text": "=*Complaint Message:*\n> {{ $('Set Intent').item.json.userMessage }}\n\n*Time:* {{ $now.toISO() }}\n\nPlease review and respond to this user as soon as possible.",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "1bc806b2-23d7-4743-b6f5-bae63a91e14b",
+      "name": "Slack - Complaint Escalation",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -2768,
+        496
+      ],
+      "webhookId": "5e302f2e-29f4-450f-b7e2-b8e9929efc83",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4g7fWMnCZW55M9PU",
+          "name": "Slack Unaiza_Folio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ output: \"I'm sorry to hear you're experiencing an issue. Your complaint has been escalated to our support team on Slack and a team member will follow up with you shortly. We apologize for the inconvenience and appreciate your patience.\" }) }}",
+        "options": {}
+      },
+      "id": "b3e65d30-4f2e-453d-8651-640bba957517",
+      "name": "Respond - Complaint Acknowledged",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -2576,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-context",
+              "name": "faqContext",
+              "value": "=={{ \n  ($('Load History').all().length > 0 \n    ? \"CONVERSATION HISTORY:\\n\" + $('Load History').all().map(t => (t.json.role === 'user' ? 'User: ' : 'Assistant: ') + t.json.content).join('\\n') + \"\\n\\n---\\n\"\n    : \"\"\n  ) +\n  \"KNOWLEDGE BASE:\\n\" +\n  $json.data.map(doc => `Q: ${doc.question}\\nA: ${doc.answer}`).join('\\n\\n')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-msg3",
+              "name": "userMessage",
+              "value": "={{ $('Webhook').item.json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-found",
+              "name": "resultsFound",
+              "value": "={{ $json.length > 0 }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "453c3e30-8ce7-4524-82eb-21d6f1cdc4ae",
+      "name": "Build RAG Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1952,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.faqContext + \"\\n\\nBased on the above knowledge base, answer this question: \" + $json.userMessage }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant for ProLign, a mentor-mentee platform for students.\n\nAnswer the user's question using ONLY the provided FAQ context. Be friendly, concise, and professional. Keep answers under 150 words.\nYou have access to the user's conversation history above. Use it to provide contextually aware answers. If the user refers to something from earlier in the conversation, use that context.\nIf the context does not contain enough information to answer, reply with exactly: ESCALATE"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1744,
+        960
+      ],
+      "id": "b610310a-6d70-4658-aece-48939e5b0929",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        1184
+      ],
+      "id": "a8c8564d-d245-4216-afe7-af89c2f2bee6",
+      "name": "Groq Chat Model3",
+      "credentials": {
+        "groqApi": {
+          "id": "9igLJ5Bh9QEPY0Bg",
+          "name": "usaidproj"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-answer",
+              "name": "ragAnswer",
+              "value": "={{ $json.output.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-msg4",
+              "name": "userMessage",
+              "value": "={{ $('Build RAG Context').item.json.userMessage }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "242f8d97-c1e7-4dbb-ae5f-fb1312e4ccf7",
+      "name": "Set RAG Answer",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1408,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-escalate",
+              "leftValue": "={{ $json.ragAnswer }}",
+              "rightValue": "ESCALATE",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8d2670a5-f762-4391-845d-9a7a9317c1ea",
+      "name": "Should Escalate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1232,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#prolign-chatbot-esclated-query",
+          "mode": "name"
+        },
+        "text": "=*User Question:*\n> {{ $('Set RAG Answer').item.json.userMessage }}\n\n*Reason:* Could not find a matching answer in the knowledge base.\n\n*Time:* {{ $now.toISO() }}\n\nPlease follow up with the user.",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "efd7e974-b146-4a1a-8833-68e820ca6478",
+      "name": "Slack - FAQ Escalation",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -1008,
+        912
+      ],
+      "webhookId": "80ada52b-27ce-418b-acd3-8de5848f429e",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4g7fWMnCZW55M9PU",
+          "name": "Slack Unaiza_Folio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ output: \"I couldn't find a specific answer to your question. I've notified our support team and someone will follow up with you shortly! In the meantime, feel free to browse our mentor profiles or try rephrasing your question.\" }) }}",
+        "options": {}
+      },
+      "id": "878180bc-524e-466b-8f44-a6c3e354e69f",
+      "name": "Respond - Escalated FAQ",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -784,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ output: $('Set RAG Answer').item.json.ragAnswer }) }}",
+        "options": {}
+      },
+      "id": "7a61885e-2b01-4a27-a985-5494c384b432",
+      "name": "Respond - FAQ Answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -816,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-faq",
+              "leftValue": "={{$('Set Intent').item.json.intent }}",
+              "rightValue": "=COMPLAINT",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "68f1a25b-009f-44e4-976a-7877e290350c",
+      "name": "Is it a Complaint?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2960,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://yiehlucjyuvvjkenspae.supabase.co/rest/v1/rpc/match_faqs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query_embedding\": {{ JSON.stringify($json.data[0].embedding) }},\n  \"match_count\": 3\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2272,
+        896
+      ],
+      "id": "5b1de86d-424e-421c-9888-0edd407ca99e",
+      "name": "HTTP Request",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U7vSY34ccXaczkID",
+          "name": "Supabase Unaiza"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://yiehlucjyuvvjkenspae.supabase.co/rest/v1/conversations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "session_id",
+              "value": "={{ \"eq.\" + $('Webhook').item.json.body.session_id }}"
+            },
+            {
+              "name": "order",
+              "value": "created_at.desc"
+            },
+            {
+              "name": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -4112,
+        624
+      ],
+      "id": "23e860bf-0497-4c48-9eeb-bbece871b5e0",
+      "name": "Load History",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "U7vSY34ccXaczkID",
+          "name": "Supabase Unaiza"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://yiehlucjyuvvjkenspae.supabase.co/rest/v1/conversations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"session_id\": \"{{ $('Webhook').item.json.body.session_id }}\",\n  \"role\": \"assistant\",\n  \"content\": \"I couldn't find a specific answer to your question. I've notified our support team and someone will follow up with you shortly!\",\n  \"intent\": \"FAQ_ESCALATED\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -784,
+        800
+      ],
+      "id": "85ed834d-bf60-47de-b9d7-ed79490d89a7",
+      "name": "HTTP Request1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U7vSY34ccXaczkID",
+          "name": "Supabase Unaiza"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://yiehlucjyuvvjkenspae.supabase.co/rest/v1/conversations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"session_id\": \"{{ $('Webhook').item.json.body.session_id }}\",\n  \"role\": \"assistant\",\n  \"content\": \"{{ $('Set RAG Answer').item.json.ragAnswer }}\",\n  \"intent\": \"FAQ\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1040,
+        1216
+      ],
+      "id": "e1b166fe-ea8b-43ee-b2ee-13ccc7598c33",
+      "name": "HTTP Request2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U7vSY34ccXaczkID",
+          "name": "Supabase Unaiza"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://yiehlucjyuvvjkenspae.supabase.co/rest/v1/conversations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"session_id\": \"{{ $('Webhook').item.json.body.session_id }}\",\n  \"role\": \"user\",\n  \"content\": \"{{ $('Set Intent').item.json.userMessage }}\",\n  \"intent\": \"{{ $('Set Intent').item.json.intent }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -3168,
+        720
+      ],
+      "id": "2174ecf8-7985-47fb-9205-9c474163d044",
+      "name": "HTTP Request3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U7vSY34ccXaczkID",
+          "name": "Supabase Unaiza"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://yiehlucjyuvvjkenspae.supabase.co/rest/v1/conversations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"session_id\": \"{{ $('Webhook').item.json.body.session_id }}\",\n  \"role\": \"assistant\",\n  \"content\": \"I'm sorry to hear you're experiencing an issue. Your complaint has been escalated to our support team on Slack and a team member will follow up with you shortly.\",\n  \"intent\": \"COMPLAINT\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2368,
+        464
+      ],
+      "id": "b95cb21d-8cd1-4859-ba24-ddd077e7c580",
+      "name": "HTTP Request4",
+      "credentials": {
+        "supabaseApi": {
+          "id": "U7vSY34ccXaczkID",
+          "name": "Supabase Unaiza"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -3904,
+        624
+      ],
+      "id": "7c8a54d3-72e7-4eda-beaf-ae0c5565aba0",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -3696,
+        624
+      ],
+      "id": "2ab72fe0-325a-4f7d-897b-c3b40a2284f0",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2064,
+        896
+      ],
+      "id": "78addd91-a96d-4598-baf5-2236796c1d3a",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Parse JSON to FAQ Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse JSON to FAQ Records": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (JINA EMBEDDING)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (JINA EMBEDDING)": {
+      "main": [
+        [
+          {
+            "node": "Create a row (SUPABASE)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row (SUPABASE)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embed User Query": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Message": {
+      "main": [
+        [
+          {
+            "node": "Load History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Set Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Intent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack - Complaint Escalation": {
+      "main": [
+        [
+          {
+            "node": "Respond - Complaint Acknowledged",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build RAG Context": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Set RAG Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set RAG Answer": {
+      "main": [
+        [
+          {
+            "node": "Should Escalate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Escalate?": {
+      "main": [
+        [
+          {
+            "node": "Slack - FAQ Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond - FAQ Answer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack - FAQ Escalation": {
+      "main": [
+        [
+          {
+            "node": "Respond - Escalated FAQ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is it a Complaint?": {
+      "main": [
+        [
+          {
+            "node": "Slack - Complaint Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Embed User Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load History": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond - Escalated FAQ": {
+      "main": [
+        []
+      ]
+    },
+    "Respond - FAQ Answer": {
+      "main": [
+        []
+      ]
+    },
+    "Respond - Complaint Acknowledged": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Is it a Complaint?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Build RAG Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "5854dc0f-839a-4cf0-abe0-26428212b61b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b6e06f0926d5bb60f60ce2bdb0569cc6ce056e04377c9deb1207cce10130105a"
+  },
+  "nodeGroups": [],
+  "id": "nNNecGrgEQeQUk8J",
+  "tags": []
+}

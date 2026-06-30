@@ -1,0 +1,212 @@
+[
+  {
+    "question": "How do I register on ProLign?",
+    "answer": "Click the 'Sign Up' button on the homepage. Fill in your name, email, and password, then select your role as either Mentee or Mentor. You will then be guided through a profile setup and an AI-based onboarding assessment.",
+    "category": "platform",
+    "tags": ["register", "signup", "account", "create account", "join"],
+    "helpful_count": 0
+  },
+  {
+    "question": "What happens after I register as a mentee?",
+    "answer": "After registration, you will undergo an AI-powered onboarding interview. The AI will assess your technical skills, soft skills, interests, and career goals to generate a personalized skill profile. Based on this profile, the system will recommend the most suitable mentors for you.",
+    "category": "onboarding",
+    "tags": ["after registration", "onboarding", "assessment", "skill profile", "new user"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How does the AI assessment interview work?",
+    "answer": "The AI assessment is a conversational interview conducted either via text or voice. It asks you questions about your technical background, areas of interest, career goals, strengths, and weaknesses. The responses are analyzed to create a detailed skill profile that drives mentor matching.",
+    "category": "onboarding",
+    "tags": ["AI interview", "assessment", "voice", "text", "skill evaluation"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How are mentors matched to me?",
+    "answer": "Our matching engine uses your AI-generated skill profile to rank mentors based on skill alignment, industry expertise, career goals compatibility, availability, experience level, and past ratings and reviews. You will receive a ranked list of recommended mentors.",
+    "category": "matching",
+    "tags": ["mentor match", "recommendation", "how matching works", "find mentor"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I book a session with a mentor?",
+    "answer": "Go to the 'Find Mentors' tab, browse or search for a mentor, and click on their profile. Select an available time slot from their calendar, write your session goals, and proceed to payment. Once payment is confirmed, the session is booked and you will receive a confirmation.",
+    "category": "booking",
+    "tags": ["book session", "schedule", "appointment", "mentor session", "how to book"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Can I reschedule or cancel a booked session?",
+    "answer": "Yes, you can reschedule or cancel a session from your dashboard under 'My Sessions'. Cancellations made at least 24 hours before the session are eligible for a full refund. Late cancellations may be subject to the platform's cancellation policy.",
+    "category": "booking",
+    "tags": ["cancel", "reschedule", "refund", "session management"],
+    "helpful_count": 0
+  },
+  {
+    "question": "What types of sessions can I book?",
+    "answer": "You can book several types of sessions including Mock Interviews, Resume and CV Reviews, Career Counseling, Technical Mentoring, and Skill Development Workshops. The session type can be selected during the booking process.",
+    "category": "booking",
+    "tags": ["session types", "mock interview", "resume review", "career counseling", "workshop"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do video sessions work?",
+    "answer": "Sessions are conducted via integrated video conferencing. On your session day, go to 'My Sessions' on your dashboard and click 'Join Call'. Make sure your camera and microphone permissions are enabled in your browser beforehand.",
+    "category": "sessions",
+    "tags": ["video call", "join session", "Jitsi", "Zoom", "online meeting"],
+    "helpful_count": 0
+  },
+  {
+    "question": "What should I do if my video call is not working?",
+    "answer": "First, check that your browser has camera and microphone permissions enabled. Try refreshing the page or switching to a supported browser like Chrome or Firefox. If the issue persists, contact our support team via this chat and we will escalate it immediately.",
+    "category": "sessions",
+    "tags": ["video not working", "camera issue", "mic issue", "technical problem", "call fix"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I pay for a session?",
+    "answer": "Payments are processed securely through our integrated payment gateway during the booking flow. You can pay using a credit or debit card. A small platform fee of 5% is added to the mentor's listed session rate.",
+    "category": "payments",
+    "tags": ["payment", "pay", "Stripe", "credit card", "session fee"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Is my payment information secure?",
+    "answer": "Yes. All payments are processed through Stripe, a PCI-DSS compliant payment provider. ProLign does not store your card details directly. Your financial data is fully encrypted and secure.",
+    "category": "payments",
+    "tags": ["payment security", "safe", "Stripe", "card data", "encryption"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Can I get a refund?",
+    "answer": "Refunds are available if you cancel at least 24 hours before your scheduled session. Refunds are processed back to your original payment method within 5 to 7 business days. Sessions that were attended are not eligible for refunds.",
+    "category": "payments",
+    "tags": ["refund", "money back", "cancellation refund", "reimbursement"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I rate my mentor after a session?",
+    "answer": "After your session ends, a rating prompt will automatically appear on your screen. You can rate your mentor from 1 to 5 stars and leave a written review. Your feedback helps maintain quality across the platform.",
+    "category": "feedback",
+    "tags": ["rate mentor", "review", "stars", "feedback", "after session"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Can I see mentor reviews before booking?",
+    "answer": "Yes. Each mentor's profile displays their average star rating and written reviews from previous mentees. We recommend reading reviews to help choose the best mentor for your goals.",
+    "category": "feedback",
+    "tags": ["mentor reviews", "ratings", "profile", "before booking", "trust"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I build a strong resume?",
+    "answer": "Focus on quantifiable achievements using the Google X-Y-Z formula: Accomplished [X] as measured by [Y] by doing [Z]. Keep your resume to one page with a clean single-column layout. List technical skills clearly at the top and avoid using skill progress bars. Tailor your resume to each job description.",
+    "category": "career",
+    "tags": ["resume", "CV", "resume tips", "how to write resume", "resume building"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I prepare for behavioral interviews?",
+    "answer": "Use the STAR method for behavioral questions: Situation, Task, Action, Result. Spend about 60% of your answer on the specific Actions you personally took. Prepare 5 to 6 strong stories from your past experience that can be adapted to different questions.",
+    "category": "career",
+    "tags": ["behavioral interview", "STAR method", "interview prep", "soft skills", "HR round"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I prepare for technical coding interviews?",
+    "answer": "Master core Data Structures and Algorithms including arrays, hash maps, linked lists, trees, and graphs. Practice on platforms like LeetCode and HackerRank daily. During interviews, think out loud, explain your approach, discuss trade-offs, and analyze time and space complexity using Big O notation.",
+    "category": "career",
+    "tags": ["coding interview", "DSA", "technical interview", "LeetCode", "algorithms"],
+    "helpful_count": 0
+  },
+  {
+    "question": "What skills should I focus on for placement preparation?",
+    "answer": "Placement preparation requires a balanced approach across Data Structures and Algorithms, System Design, and strong projects. Start with arrays, hash maps, and two-pointer techniques. Build 2 to 3 real-world projects hosted online with clean documentation. Also work on communication and problem-solving skills.",
+    "category": "career",
+    "tags": ["placement prep", "campus placement", "skills", "DSA", "projects"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How can a mentor help me with career guidance?",
+    "answer": "Mentors on ProLign are experienced professionals who can guide you on career path selection, skill development, industry trends, job search strategies, networking, and interview preparation. They provide personalized advice based on your profile and goals.",
+    "category": "career",
+    "tags": ["career guidance", "mentor help", "career advice", "professional development"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I apply to become a mentor on ProLign?",
+    "answer": "Click 'Become a Mentor' on the homepage and complete your mentor profile including your area of expertise, years of experience, availability, and session rate. Our team reviews applications and approves mentors based on professional background and expertise.",
+    "category": "platform",
+    "tags": ["become mentor", "mentor application", "join as mentor", "mentor signup"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do mentors get paid?",
+    "answer": "Mentors receive payment directly to their connected bank account or payout method after each completed session. ProLign deducts a platform commission before transferring the remaining amount. Payouts are typically processed within 3 to 5 business days.",
+    "category": "payments",
+    "tags": ["mentor payment", "payout", "earnings", "commission", "get paid"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Can I message a mentor before booking?",
+    "answer": "Currently ProLign does not support direct messaging before booking. However, you can view the mentor's full profile, expertise areas, and reviews to make an informed decision. Session goals can be shared during the booking process.",
+    "category": "platform",
+    "tags": ["message mentor", "contact mentor", "chat before booking", "communicate"],
+    "helpful_count": 0
+  },
+  {
+    "question": "What if my mentor does not show up for the session?",
+    "answer": "If your mentor fails to join within 10 minutes of the session start time, please report it through the platform. You will be eligible for a full refund and we will take appropriate action against the mentor's account.",
+    "category": "sessions",
+    "tags": ["mentor no show", "absent", "missed session", "refund", "complaint"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Is ProLign free to use?",
+    "answer": "Registration and browsing mentor profiles on ProLign is completely free. You only pay when you book a paid mentorship session. Session fees are set by individual mentors and a 5% platform fee is added at checkout.",
+    "category": "platform",
+    "tags": ["free", "cost", "pricing", "subscription", "platform fee"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I reset my password?",
+    "answer": "Click 'Forgot Password' on the login page and enter your registered email address. You will receive a password reset link in your inbox. Follow the link to set a new password. If you do not receive the email, check your spam folder.",
+    "category": "platform",
+    "tags": ["reset password", "forgot password", "login issue", "account access"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I update my profile?",
+    "answer": "Go to your dashboard and click on your profile picture or name in the top navigation bar. From there you can update your bio, skills, career goals, profile photo, and contact preferences.",
+    "category": "platform",
+    "tags": ["update profile", "edit profile", "change info", "profile settings"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Will I receive reminders for my upcoming sessions?",
+    "answer": "Yes. ProLign sends automated email and in-platform notifications 24 hours and 1 hour before your scheduled session as reminders. Make sure your notification preferences are enabled in your account settings.",
+    "category": "booking",
+    "tags": ["reminder", "notification", "session alert", "email reminder"],
+    "helpful_count": 0
+  },
+  {
+    "question": "Can I book multiple sessions with different mentors?",
+    "answer": "Absolutely. You can book sessions with as many mentors as you like. This can be useful if you want guidance on different topics such as technical skills from one mentor and career strategy from another.",
+    "category": "booking",
+    "tags": ["multiple mentors", "book multiple", "different mentors", "parallel sessions"],
+    "helpful_count": 0
+  },
+  {
+    "question": "What domains are available on ProLign?",
+    "answer": "ProLign currently supports mentors across Software Engineering, Data Science, Product Management, UI/UX Design, Marketing, Finance, and Entrepreneurship. More domains are being added regularly based on demand.",
+    "category": "platform",
+    "tags": ["domains", "fields", "categories", "engineering", "design", "data science"],
+    "helpful_count": 0
+  },
+  {
+    "question": "How do I report an issue or complaint?",
+    "answer": "You can report any issue directly through this chatbot by describing your problem. If the chatbot cannot resolve it, your concern will be automatically escalated to our support team on Slack and a team member will follow up with you shortly.",
+    "category": "platform",
+    "tags": ["complaint", "report issue", "support", "help", "problem", "escalate"],
+    "helpful_count": 0
+  }
+]
